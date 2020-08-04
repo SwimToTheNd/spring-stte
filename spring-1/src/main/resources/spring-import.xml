@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--Spring 允许通过 <impt> 将多个配置文件引入到一个文件中，进行配置文件的集成。
+        这样在启动 Spring 容器时，仅需要指定这个合并好的配置文件就可以。
+        impt 元素的 resource 属性支持 Spring 的标准的路径资源:
+        classpath:从类路径下加载资源,classpath:
+        file:从文件系统加载资源，可以是绝对或相对路径，file:/conf/security/spring-shiro.xml
+        http:从web服务器中加载资源，http://www.baidu.com/resource/bean.xml
+        ftp:从FTP服务器中加载资源 ，ftp://www.baidu.com/resource/bean.xml
+    -->
+    <import resource="spring-annotation.xml"/>
+    <import resource="spring-auto.xml"/>
+</beans>

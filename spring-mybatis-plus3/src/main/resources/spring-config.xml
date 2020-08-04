@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mapper="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+
+    <context:property-placeholder location="db.properties"/>
+
+    <context:component-scan base-package="com.stte.spring.smp3"/>
+
+    <mapper:scan base-package="com.stte.spring.smp3.mapper"/>
+
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.apache.ibatis.datasource.pooled.PooledDataSource">
+        <property name="url" value="${jdbc.jdbcUrl}"/>
+        <property name="driver" value="${jdbc.driverClass}"/>
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="poolMaximumIdleConnections" value="${jdbc.initPoolSize}"/>
+        <property name="poolMaximumActiveConnections" value="${jdbc.maxPoolSize}"/>
+    </bean>
+
+    <!-- 定义MybatisPlus的全局策略配置-->
+    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+
+        <!--<property name="configLocation" value="classpath:mybatis-config.xml"/>-->
+
+        <property name="configuration">
+            <bean class="com.baomidou.mybatisplus.core.MybatisConfiguration">
+                <!--开启下划线驼峰映射-->
+                <property name="mapUnderscoreToCamelCase" value="true"/>
+            </bean>
+        </property>
+        <!-- 别名处理 -->
+        <property name="typeAliasesPackage" value="com.stte.spring.smp3.entity"/>
+        <!-- 注入全局MP策略配置 -->
+        <property name="globalConfig">
+            <bean class="com.baomidou.mybatisplus.core.config.GlobalConfig">
+                <property name="dbConfig">
+                    <bean class="com.baomidou.mybatisplus.core.config.GlobalConfig.DbConfig">
+                        <!--主键规则-->
+                        <property name="idType" value="AUTO"/>
+                        <!--表前缀-->
+                        <property name="tablePrefix" value=""/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!--配置transactionManager-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <constructor-arg name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>

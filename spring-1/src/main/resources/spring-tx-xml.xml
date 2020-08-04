@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <import resource="spring-jdbc.xml"/>
+
+    <bean id="bookShopDao" class="com.stte.spring.tx.xml.dao.impl.BookSopDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
+    <bean id="bookShopService" class="com.stte.spring.tx.xml.service.impl.BookShopServiceImpl">
+        <property name="bookShopDao" ref="bookShopDao"/>
+    </bean>
+
+    <bean id="cashierService" class="com.stte.spring.tx.xml.service.impl.CashierServiceImpl">
+        <property name="bookShopService" ref="bookShopService"/>
+    </bean>
+
+    <!--transactionManager-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <!--用事务通知声明式地管理事务-->
+    <!--声明事务通知-->
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 根据方法名指定事务的属性,默认REQUIRED -->
+            <tx:method name="purchase"
+                       propagation="REQUIRES_NEW"
+                       isolation="REPEATABLE_READ"
+                       timeout="30"
+                       read-only="false"
+                       no-rollback-for="java.lang.ArithmeticException"
+                       rollback-for="java.io.IOException,java.sql.SQLException"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--声明事务配置-->
+    <aop:config>
+        <!--配置事务切入点-->
+        <aop:pointcut id="txPointCut" expression="execution(public * com.stte.spring.tx.xml.service.*.*(..))"/>
+        <aop:advisor advice-ref="transactionAdvice" pointcut-ref="txPointCut"/>
+    </aop:config>
+</beans>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--使用属性注入，setter方法-->
+    <!--未使用id时候，默认使用类的全限定名作为id-->
+    <bean class="com.stte.spring.ioc.Car">
+        <property name="name" value="奔驰"/>
+        <property name="company" value="长春二汽"/>
+        <property name="price" value="49999.99"/>
+    </bean>
+
+    <!--使用构造方法，按索引匹配入参-->
+    <!-- 若一个 bean 有多个构造器, 如何通过构造器来为 bean 的属性赋值 -->
+    <!-- 可以根据 index 和 value 进行更加精确的定位. (了解) -->
+    <bean id="car" class="com.stte.spring.ioc.Car">
+        <constructor-arg index="0" value="奥迪"/>
+        <constructor-arg index="1" value="长春一汽"/>
+        <constructor-arg index="2" value="5999.99"/>
+    </bean>
+
+    <!--使用构造方法，按类型匹配身入参-->
+    <bean id="cart" class="com.stte.spring.ioc.Car">
+        <constructor-arg type="java.lang.String" value="几番"/>
+        <constructor-arg type="java.lang.String" value="长春五汽"/>
+        <constructor-arg type="int" value="45"/>
+    </bean>
+
+    <!--使用构造方法，按参数名称匹配入参，必须要有对应的构造器-->
+    <bean id="car3" class="com.stte.spring.ioc.Car">
+        <constructor-arg name="name" value="奥迪AAA"/>
+        <constructor-arg name="company" value="长春三汽"/>
+        <!--<null/> 元素标签为 Bean 的字符串或其它对象类型的属性注入 null 值-->
+        <constructor-arg name="price">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="car4" class="com.stte.spring.ioc.Car">
+        <constructor-arg value="ChangAnMezda"/>
+        <constructor-arg>
+            <value><![CDATA[<ATARZA>]]></value>
+        </constructor-arg>
+        <constructor-arg value="180" type="int"/>
+    </bean>
+
+    <bean id="dao" class="com.stte.spring.ioc.Dao"/>
+
+    <bean name="service" class="com.stte.spring.ioc.Service">
+        <!-- 通过 ref 属性值指定当前属性指向哪一个 bean! -->
+        <property name="dao" ref="dao"/>
+    </bean>
+
+    <bean id="service2" class="com.stte.spring.ioc.Service">
+        <property name="dao">
+            <!-- 内部 bean, 类似于匿名内部类对象. 不能被外部的 bean 来引用, 也没有必要设置 id 属性 -->
+            <bean class="com.stte.spring.ioc.Dao">
+                <property name="dataSource" value="c3p0"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--通过属性配置，使用ref指向容器中的其他bean-->
+    <bean name="action" class="com.stte.spring.ioc.Action">
+        <property name="service" ref="service"/>
+    </bean>
+
+    <bean name="action2" class="com.stte.spring.ioc.Action">
+        <property name="service" ref="service2"/>
+        <!--spring支持级联属性的配置-->
+        <property name="service.dao.dataSource" value="dbcp2"/>
+    </bean>
+
+    <!--装配集合属性-->
+    <!--配置 java.util.List 类型的属性, 需要指定 <list>  标签,
+        在标签里包含一些元素. 这些标签可以通过 <value> 指定简单的常量值,
+        通过 <ref> 指定对其他 Bean 的引用. 通过<bean> 指定内置 Bean 定义.
+        通过 <null/> 指定空元素. 甚至可以内嵌其他集合.
+        配置 java.util.Set 需要使用 <set> 标签, 定义元素的方法与 List 一样.
+        Java.util.Map 通过 <map> 标签定义, <map> 标签里可以使用多个 <entry> 作为子标签. 每个条目包含一个键和一个值.
+    -->
+    <bean id="user" class="com.stte.spring.ioc.User">
+        <property name="name" value="Jack"/>
+        <property name="cars">
+            <list>
+                <ref bean="car"/>
+                <ref bean="car3"/>
+            </list>
+        </property>
+        <!--set集合-->
+        <property name="hobby">
+            <set>
+                <value>篮球</value>
+                <value>唱</value>
+                <value>rap</value>
+            </set>
+        </property>
+        <!--map集合-->
+        <property name="services">
+            <map>
+                <entry key="service1" value-ref="service"/>
+                <entry key="service2" value-ref="service2"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--    使用集合标签定义集合    -->
+    <!-- 声明集合类型的 bean -->
+    <util:list id="cars">
+        <ref bean="car"/>
+        <ref bean="car4"/>
+    </util:list>
+    <util:set id="hobbies">
+        <value>唱跳rap</value>
+        <value>篮球</value>
+    </util:set>
+    <util:map id="services">
+        <entry key="s1" value-ref="service"/>
+        <entry key="s2" value-ref="service2"/>
+    </util:map>
+
+    <bean id="user2" class="com.stte.spring.ioc.User">
+        <property name="name" value="Rose"/>
+        <!--引用外部声明的list-->
+        <property name="cars" ref="cars"/>
+    </bean>
+
+    <!--使用p命名空间-->
+    <bean id="user3" class="com.stte.spring.ioc.User"
+          p:name="Taitannic"
+          p:hobby-ref="hobbies"/>
+
+    <!--xml配置bean的自动装配，使用bean的autowire属性，使用byName，byType，constructor(多个构造器时复杂不适用)-->
+    <!--byType(根据类型自动装配): 若 IOC 容器中有多个与目标 Bean 类型一致的 Bean.  Spring 将无法判定哪个 Bean 最合适该属性, 不能执行自动装配.-->
+    <!--autowire将自动装配bean的所有属性，只希望装配个别属性时不够灵活-->
+    <!--autowire要么根据类型自动装配, 要么根据名称自动装配, 不能两者兼而有之-->
+    <bean id="action3" class="com.stte.spring.ioc.Action" autowire="byName"/>
+    <!--<bean id="service3" class="com.stte.spring.ioc.Service" autowire="byType"/>-->
+
+    <!-- 默认情况下 bean 是单例的!
+        但有的时候, bean 就不能使单例的. 例如: Struts2 的 Action 就不是单例的! 可以通过 scope 属性来指定 bean 的作用域
+        prototype: 原型的. 每次调用 getBean 方法都会返回一个新的 bean. 且在第一次调用 getBean 方法时才创建实例
+        singleton: 单例的. 每次调用 getBean 方法都会返回同一个 bean. 且在 IOC 容器初始化时即创建 bean 的实例. 默认值
+        request:每次HTTP请求都会创建一个新的Bean，该作用域仅适用于WebApplicationContext
+        session:同一个HTTP Session 共享一个Bean，不同的HTTP Session使用不同的Bean，该作用域仅适用于WebApplicationContext。
+    -->
+    <bean id="dao2" class="com.stte.spring.ioc.Dao" scope="prototype"/>
+
+    <!--bean 的配置能够继承，使用 parent 来完成继承
+        Spring 允许继承 bean 的配置, 被继承的 bean 称为父 bean. 继承这个父 Bean 的 Bean 称为子 Bean
+        子 Bean 从父 Bean 中继承配置, 包括 Bean 的属性配置
+        子 Bean 也可以覆盖从父 Bean 继承过来的配置
+        父 Bean 可以作为配置模板, 也可以作为 Bean 实例. 若只想把父 Bean 作为模板, 可以设置 <bean> 的abstract 属性为 true, 这样 Spring 将不会实例化这个 Bean
+        并不是 <bean> 元素里的所有属性都会被继承. 比如: autowire, abstract 等.
+        也可以忽略父 Bean 的 class 属性, 让子 Bean 指定自己的类, 而共享相同的属性配置. 但此时 abstract 必须设为 true
+    -->
+    <bean id="user4" parent="user" p:name="Bob"/>
+    <!--Spring 允许用户通过 depends-on 属性设定 Bean 前置依赖的Bean，前置依赖的 Bean 会在本 Bean 实例化之前创建好
+    如果前置依赖于多个 Bean，则可以通过逗号，空格或的方式配置 Bean 的名称，先实例化user6，再实例化user5-->
+    <bean id="user5" parent="user" p:name="Backham" depends-on="user6"/>
+    <bean id="user6" parent="user" p:name="维多利亚"/>
+</beans>

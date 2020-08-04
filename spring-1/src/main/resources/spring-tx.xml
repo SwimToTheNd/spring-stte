@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:component-scan base-package="com.stte.spring.tx"/>
+
+    <import resource="classpath:spring-jdbc.xml"/>
+
+    <!--spring事务管理-->
+    <!--Spring 的核心事务管理抽象是PlatformTransactionManager,
+        它为事务管理封装了一组独立于技术的方法. 无论使用 Spring 的哪种事务管理策略(编程式或声明式), 事务管理器都是必须的.
+        DataSourceTransactionManager:在应用程序中只需要处理一个数据源, 而且通过 JDBC 存取
+        JtaTransactionManager:在 JavaEE 应用服务器上用 JTA(Java Transaction API) 进行事务管理
+        HibernateTransactionManager:用于 Hibernate 框架存取数据库
+        -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <constructor-arg name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--用 @Transactional 注解声明式地管理事务，只需要启用 <tx:annotation-driven> 元素，并为之指定事务管理器-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>

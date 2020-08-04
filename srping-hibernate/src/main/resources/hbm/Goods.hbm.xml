@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<!--
+    <hibernate-mapping>一般不去配置，采用默认即可。
+    schema:指定映射数据库的schema(模式/数据库)，如果指定该属性，则表名会自动添加该schema前缀
+    package:指定包前缀 指定持久化类所在的包名 这样之后calss子元素中就不必使用全限定性的类名
+    default-cascade="none"：默认的级联风格，表与表联动。
+    default-lazy="true"：默认延迟加载
+ -->
+    <hibernate-mapping>
+        <class name="com.stte.spring.hibernate.entity.Goods" table="hb_goods">
+
+            <id name="gid" type="java.lang.Integer">
+                <column name="gid"/>
+                <generator class="identity"/>
+            </id>
+
+            <property name="gname" type="java.lang.String" column="gname"/>
+            <property name="gmessage" type="java.lang.String" column="gmessage"/>
+
+            <!--多种商品对应一种商品分类
+                sort表示Sort实体，使用Class指明是哪一个类
+                column：对应商品分类表的id列，查询gsid列来获取Sort对象
+            -->
+            <many-to-one name="sort" class="com.stte.spring.hibernate.entity.Sort" column="gsid"/>
+
+            <!--<key>中column属性的值:第三张表中外键的名称
+                通过查询第三张表hb_order_goods表的goods_id字段，查询商品所属的所有订单，根据订单order_id查询hb_order表，获取所有的订单信息。
+                cascade：级联更新删除
+            -->
+            <set name="orderSet" table="hb_order_goods" cascade="save-update,delete" batch-size="10">
+                <key column="goods_id"></key>
+                <many-to-many class="com.stte.spring.hibernate.entity.Order" column="order_id"/>
+            </set>
+        </class>
+</hibernate-mapping>

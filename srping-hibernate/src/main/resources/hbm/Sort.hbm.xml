@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<!--
+    <hibernate-mapping>一般不去配置，采用默认即可。
+    schema:指定映射数据库的schema(模式/数据库)，如果指定该属性，则表名会自动添加该schema前缀
+    package:指定包前缀 指定持久化类所在的包名 这样之后calss子元素中就不必使用全限定性的类名
+    default-cascade="none"：默认的级联风格，表与表联动。
+    default-lazy="true"：默认延迟加载
+ -->
+<hibernate-mapping>
+    <class name="com.stte.spring.hibernate.entity.Sort" table="hb_sort">
+
+        <id name="sid" type="java.lang.Integer">
+            <column name="sid"/>
+            <generator class="native"/>
+        </id>
+
+        <property name="sname" type="java.lang.String" column="sname"/>
+        <property name="smessage" type="java.lang.String" column="smessage"/>
+
+        <!--一个商品分类对应有多个商品，是一对多的关系
+            通过查询商品goods表的gsid列，查询商品分类sid对应有哪些商品，结果使用Set接收
+            Hibernate默认双方都要维护主键，使用设置inverse为true。表示不维护主键，inverse表示需要维护主键
+            cascade:级联删除或更新
+            lazy:延迟 true默认延迟，false不延迟，extra极度延迟，直接关联的实体集合时不查询，访问实体集合的具体属性时触发查询
+        -->
+        <set name="goodsSet" cascade="save-update,delete" inverse="true" batch-size="10">
+            <key column="gsid"/>
+            <one-to-many class="com.stte.spring.hibernate.entity.Goods"/>
+        </set>
+    </class>
+</hibernate-mapping>

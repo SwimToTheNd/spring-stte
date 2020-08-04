@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:contxt="http://www.springframework.org/schema/context"
+       xmlns:context="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <contxt:component-scan base-package="com.stte.spring.aop"/>
+
+    <!--Spring IOC 容器中启用 AspectJ 注解支持,
+        当 Spring IOC 容器侦测到 Bean 配置文件中的 <aop:aspectj-autoproxy> 元素时, 会自动为与 AspectJ 切面匹配的 Bean 创建代理.
+        要在 Spring 应用中使用 AspectJ 注解, 必须在 classpath 下包含 AspectJ 类库
+    -->
+    <context:aspectj-autoproxy/>
+</beans>

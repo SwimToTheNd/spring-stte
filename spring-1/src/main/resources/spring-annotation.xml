@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--组件扫描(component scanning):  Spring 能够从 classpath 下自动扫描, 侦测和实例化具有特定注解的组件.
+        @Component: 基本注解, 标识了一个受 Spring 管理的组件
+        @Repository: 标识持久层组件
+        @Service: 标识服务层(业务层)组件
+        @Controller: 标识表现层组件
+
+        <context:component-scan> 元素还会自动注册 AutowiredAnnotationBeanPostProcessor 实例,
+        该实例可以自动装配具有 @Autowired 和 @Resource 、@Inject注解的属性.
+    -->
+
+    <!--base-package 属性指定一个需要扫描的基类包，Spring 容器将会扫描这个基类包里及其子包中的所有类.
+        当需要扫描多个包时, 可以使用逗号分隔.
+        如果仅希望扫描特定的类而非基包下的所有类，可使用 resource-pattern 属性过滤特定的类，示例：resource-pattern="annotation/*.class"-->
+    <context:component-scan base-package="com.stte.spring.annotation">
+    <!--<context:include-filter> 子节点表示要包含的目标类
+        <context:exclude-filter> 子节点表示要排除在外的目标类
+        <context:component-scan> 下可以拥有若干个 <context:include-filter> 和 <context:exclude-filter> 子节点
+        支持多种类型的过滤表达式：
+        annotation:对是否标注了某个注解的目标类进行过滤
+        assignable:对是否继承于某个类的目标类进行过滤
+        aspectj:使用AspectJ对目标类进行过滤
+        regex:使用正则表达式对目标类进行过滤
+        custom:对实现了org.springframework.core.type.filter.TypeFilter接口的目标类进行过滤
+    -->
+    </context:component-scan>
+</beans>

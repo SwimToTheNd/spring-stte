@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--PropertyPlaceholderConfigurer 是 BeanFactory 的一个后置处理器,
+        这个处理器允许用户将 Bean 配置的部分内容外移到属性文件中. 可以在 Bean 配置文件里使用形式为 ${var} 的变量,
+        PropertyPlaceholderConfigurer 从属性文件里加载属性, 并使用这些属性来替换变量.-->
+    <!--spring 2.0配置方式-->
+    <!--
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:db.properties"/>
+    </bean>
+    -->
+
+
+    <!--spring 2.5 简化，多个文件用逗号分隔-->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
+        <property name="driverClass" value="${jdbc.driverClass}"/>
+        <property name="user" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialPoolSize" value="${jdbc.initPoolSize}"/>
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"/>
+    </bean>
+
+    <!--Spring 表达式语言（简称SpEL）：是一个支持运行时查询和操作对象的强大的表达式语言。
+        SpEL 为 bean 的属性进行动态赋值提供了便利
+        通过 SpEL 可以实现：
+        通过 bean 的 id 对 bean 进行引用 #{bean id}
+        调用方法以及引用对象中的属性 #{bean.f()} #{bean.field}
+        计算表达式的值 #{2 * T(java.lang.Math).PI * circle.radius} 通过T()调用类的静态方法
+        正则表达式的匹配 #{admin.email matches '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}'}
+        比较运算 lt(<) gt(>) eq(==) le(<=) ge(>=)
+        逻辑运算 and or not |
+        if-else运算 ? true:false
+    -->
+    <bean id="girl" class="com.stte.spring.ioc.User">
+        <property name="name" value="#{'周迅'}"/>
+    </bean>
+    <bean id="boy" class="com.stte.spring.ioc.User" init-method="init" destroy-method="destroy">
+        <property name="name" value="高胜远"/>
+        <property name="wifeName" value="#{girl.name}"/>
+    </bean>
+
+    <!-- 配置 bean 后置处理器: 不需要配置 id 属性, IOC 容器会识别到他是一个 bean 后置处理器, 并调用其方法 -->
+    <bean class="com.stte.spring.auto.MyBeanPostProcessor"></bean>
+
+
+    <!-- 通过工厂方法的方式来配置 bean -->
+    <!-- 1. 通过静态工厂方法: 一个类中有一个静态方法, 可以返回一个类的实例(了解) 通过类的静态方法创建bean-->
+    <!-- 在 class 中指定静态工厂方法的全类名, 在 factory-method 中指定静态工厂方法的方法名 -->
+    <!-- public final static DateFormat getDateInstance(int style) 返回DateFormat对象-->
+    <bean id="dateFormat" class="java.text.DateFormat" factory-method="getDateInstance">
+        <!-- 可以通过 constructor-arg 子节点为静态工厂方法指定参数 -->
+        <constructor-arg value="2"></constructor-arg>
+    </bean>
+
+    <!-- 2. 实例工厂方法: 先需要创建工厂对象, 再调用工厂的非静态方法返回实例(了解) -->
+    <!-- ①. 创建工厂对应的 bean -->
+    <!--SimpleDateFormat(String pattern) 构造方法-->
+    <bean id="simpleDateFormat" class="java.text.SimpleDateFormat">
+        <constructor-arg value="yyyy-MM-dd hh:mm:ss"></constructor-arg>
+    </bean>
+    <!-- ②. 有实例工厂方法来创建 bean 实例 -->
+    <!-- factory-bean 指向工厂 bean, factory-method 指定工厂方法(了解) -->
+    <!--Date parse(String source)返回Date对象-->
+    <bean id="datetime" factory-bean="simpleDateFormat" factory-method="parse">
+        <!-- 通过 constructor-arg 执行调用工厂方法需要传入的参数 -->
+        <constructor-arg value="1990-12-12 12:12:12"></constructor-arg>
+    </bean>
+
+    <!--实现 FactoryBean 接口在 Spring IOC 容器中配置 Bean-->
+    <!--Spring 中有两种类型的 Bean, 一种是普通Bean, 另一种是工厂Bean, 即FactoryBean.
+        FactoryBean 跟普通Bean不同, 其返回的对象不是指定类的一个实例, 其返回的是该工厂 Bean 的 getObject 方法所返回的对象
+        id实际为getObject方法返回对象bean的名称
+    -->
+    <bean id="user" class="com.stte.spring.auto.UserFactoryBean"/>
+</beans>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.stte.spring.aop">
+        <context:exclude-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect"/>
+    </context:component-scan>
+
+
+    <!--配置切面bean-->
+    <bean id="calculatorLoggingAspect" class="com.stte.spring.aop.xml.CalculatorLoggingAspect"/>
+    <bean id="calculatorValidateAspect" class="com.stte.spring.aop.xml.CalculatorValidateAspect"/>
+
+    <!--正常情况下, 基于注解的声明要优先于基于 XML 的声明. 通过 AspectJ 注解, 切面可以与 AspectJ 兼容, 而基于 XML 的配置则是 Spring 专有的. -->
+    <!--在 Bean 配置文件中, 所有的 Spring AOP 配置都必须定义在 <aop:config> 元素内部.
+        对于每个切面而言, 都要创建一个 <aop:aspect> 元素来为具体的切面实现引用后端 Bean 实例. 切面 Bean 必须有一个标示符, 供 <aop:aspect> 元素引用-->
+    <!--AOP配置-->
+    <aop:config>
+        <!--配置切点-->
+        <!--切入点必须定义在 <aop:aspect> 元素下, 或者直接定义在 <aop:config> 元素下.
+            定义在 <aop:aspect> 元素下: 只对当前切面有效
+            定义在 <aop:config> 元素下: 对所有切面都有效
+            -->
+        <aop:pointcut id="declareJointPointExpression" expression="execution(public * com.stte.spring.aop.ArithmeticCalculator.*(..))"/>
+        <!--配置切面-->
+        <aop:aspect id="logginAspect" ref="calculatorLoggingAspect">
+            <!--通知元素需要使用 <pointcut-ref> 来引用切入点, 或用 <pointcut> 直接嵌入切入点表达式.  method 属性指定切面类中通知方法的名称-->
+            <aop:before method="beforeMethod" pointcut="execution(public * com.stte.spring.aop.ArithmeticCalculator.add(..))"/>
+            <aop:after method="afterMethod" pointcut-ref="declareJointPointExpression"/>
+            <aop:after-returning method="afterReturning" returning="result" pointcut-ref="declareJointPointExpression"/>
+            <aop:after-throwing method="afterThrowing" throwing="e" pointcut-ref="declareJointPointExpression"/>
+            <aop:around method="aroundMethod" pointcut-ref="declareJointPointExpression"/>
+
+            <!--引入通知,让Arithmetic*匹配上的类实现MaxCalculator和MinCalculator接口-->
+            <aop:declare-parents types-matching="com.stte.spring.aop.Arithmetic*"
+                                 implement-interface="com.stte.spring.aop.MaxCalculator"
+                                 default-impl="com.stte.spring.aop.MaxCalculatorImpl"/>
+            <aop:declare-parents types-matching="com.stte.spring.aop.Arithmetic*"
+                                 implement-interface="com.stte.spring.aop.MinCalculator"
+                                 default-impl="com.stte.spring.aop.MinCalculatorImpl"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
