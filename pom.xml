@@ -14,6 +14,7 @@
         <module>spring-mybats</module>
         <module>spring-mybatis-plus</module>
         <module>spring-mybatis-plus3</module>
+        <module>jsonschema</module>
     </modules>
 
     <properties>

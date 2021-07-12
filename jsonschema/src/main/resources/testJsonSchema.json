@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "The unique identifier for a book",
+      "type": "integer",
+      "minimum": 1
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMinimum": true
+    }
+  },
+  "patternProperties": {
+    "^a": {
+      "type": "number"
+    },
+    "^b": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": {
+    "type": "number"
+  },
+  "minProperties": 1,
+  "maxProperties": 5,
+  "required": [
+    "id",
+    "name",
+    "price"
+  ]
+}
