@@ -14,7 +14,7 @@ import java.util.Iterator;
  * @author: chenxiaohua
  * @date: 2021/7/12
  */
-public class JsonSchemaTest {
+public class FgeJsonSchemaTest {
 
     public static void main(String[] args) throws IOException {
         ClassPathResource json = new ClassPathResource("/test.json");
