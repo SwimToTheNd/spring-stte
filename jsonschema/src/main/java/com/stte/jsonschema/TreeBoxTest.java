@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 找出结点为isBox为true的结点，包含经过的结点
+ * 找出节点为isBox为true的节点，包含经过的节点
  *
  * @author: chenxiaohua
  * @date: 2021/7/15
@@ -27,6 +27,7 @@ public class TreeBoxTest {
         LinkedList<Integer> boxedList = new LinkedList<>();
         lisIsBox(tree, boxedList);
         System.out.println(boxedList);
+        System.out.println(JSON.toJSONString(tree));
     }
 
     private static void lisIsBox(List<TreeBox> tree, LinkedList<Integer> boxedList) {
@@ -41,7 +42,7 @@ public class TreeBoxTest {
             } else {
                 lisIsBox(children, boxedList);
             }
-            // 最后一个结点为当前结点且isBox为false是，说明其子结点中没有isBox为true的结点
+            // 最后一个节点为当前节点且isBox为false是，说明其子节点中没有isBox为true的节点
             if (treeBox.getId() == boxedList.getLast() && !treeBox.isBox) {
                 boxedList.removeLast();
             }
