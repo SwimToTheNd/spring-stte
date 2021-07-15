@@ -1,0 +1,81 @@
+[
+  {
+    "id": 1,
+    "name": "Root",
+    "children": [
+      {
+        "id": 2,
+        "name": "Child #11",
+        "children": [
+          {
+            "id": 10,
+            "name": "Child #21",
+            "isBox": true
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Child #12",
+        "children": [
+          {
+            "id": 11,
+            "name": "Child #31",
+            "children": [
+              {
+                "id": 13,
+                "name": "Child #111"
+              },
+              {
+                "id": 14,
+                "name": "Child #112"
+              }
+            ]
+          },
+          {
+            "id": 12,
+            "name": "Child #32",
+            "isBox": true
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Child #13",
+        "children": [
+          {
+            "id": 5,
+            "name": "Child #41",
+            "isBox": true,
+            "children": [
+              {
+                "id": 7,
+                "name": "Child #51"
+              },
+              {
+                "id": 8,
+                "name": "Child #52",
+                "isBox": true
+              },
+              {
+                "id": 9,
+                "name": "Child #53"
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "name": "Child #42",
+            "isBox": true,
+            "children": [
+              {
+                "id": 7,
+                "name": "Child #61"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
